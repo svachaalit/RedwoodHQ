@@ -91,9 +91,27 @@ exports.initDB = function(port,callback){
       MongoClient = mongo.MongoClient;
 
   var dbRetry = 420;
+  var createMongoURI = function(){
+    var envOptions = require('./env')
+    if(!envOptions){
+      console.error("Env options are not set, please fill the data in env.json");
+      process.exit(1)
+    }
+    return 'mongodb://' + 
+    envOptions.MONGO_USERNAME +
+    ':' + 
+    envOptions.MONGO_PASSWORD +
+    '@' +
+    envOptions.MONGO_URL +
+    ':' +
+    envOptions.MONGO_PORT +
+    '/' +
+    envOptions.MONGO_DBNAME
+  };
+
   var connect = function(){
       //TODO read password from config
-      MongoClient.connect("mongodb://admin:admin@ds011258.mlab.com:11258/integrator_magento", function(err, dbreturn) {
+      MongoClient.connect(createMongoURI(), function(err, dbreturn) {
         db = dbreturn;
         if(err){
           console.error("Couldn't connect to MongoDB, please provide correct password", err.message);
