@@ -85,30 +85,26 @@ exports.initLogger = function(fileName){
 };
 
 exports.initDB = function(port,callback){
-    var mongo = require('mongodb'),
-        Server = mongo.Server,
-        Db = mongo.Db;
+  var mongo = require('mongodb'),
+      Server = mongo.Server,
+      Db = mongo.Db,
+      MongoClient = mongo.MongoClient;
 
-    var dbRetry = 420;
-    var connect = function(){
-        var dbServer = new Server('localhost', parseInt(port), {poolSize :100,auto_reconnect: true,safe:true});
-        db = new Db('automationframework', dbServer);
-        db.open(function(err, db) {
-            if(!err) {
-                if (callback) callback();
-                console.log("DB connected");
-            }
-            else{
-                if(dbRetry == 0){
-                    console.error("Couldn't connect to MongoDB", err.message);
-                    process.exit(1);
-                }
-                dbRetry--;
-                setTimeout(connect,1000);
-            }
-        });
-    };
-    connect()
+  var dbRetry = 420;
+  var connect = function(){
+      //TODO read password from config
+      MongoClient.connect("mongodb://admin:admin@ds011258.mlab.com:11258/integrator_magento", function(err, dbreturn) {
+        db = dbreturn;
+        if(err){
+          console.error("Couldn't connect to MongoDB, please provide correct password", err.message);
+          process.exit(1);
+        }
+        if(callback) callback();
+        console.log("DB connected");
+      }
+    );
+  };
+  connect()
 
 };
 

@@ -314,7 +314,7 @@ app.post('/methodFinder',auth.auth, methodFinder.methodFinderPost);
 if(process.platform != "win32") {
     console.log = function(){};
     console.info = function(){};
-    console.error = function(){};
+    //console.error = function(){};
     console.warn = function(){};
 }
 
