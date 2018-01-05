@@ -12,3 +12,4 @@ ant
 log
 test
 .vscode/
+app.pid
