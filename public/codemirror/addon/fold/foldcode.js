@@ -49,7 +49,7 @@
     });
     var myRange = cm.markText(range.from, range.to, {
       replacedWith: myWidget,
-      clearOnEnter: getOption(cm, options, "clearOnEnter"),
+      clearOnEnter: true,
       __isFold: true
     });
     myRange.on("clear", function(from, to) {
@@ -65,8 +65,6 @@
       widget = document.createElement("span");
       widget.appendChild(text);
       widget.className = "CodeMirror-foldmarker";
-    } else if (widget) {
-      widget = widget.cloneNode(true)
     }
     return widget;
   }
@@ -131,8 +129,7 @@
     rangeFinder: CodeMirror.fold.auto,
     widget: "\u2194",
     minFoldSize: 0,
-    scanUp: false,
-    clearOnEnter: true
+    scanUp: false
   };
 
   CodeMirror.defineOption("foldOptions", null);

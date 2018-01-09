@@ -6,8 +6,8 @@
   function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1)); }
 
   MT("indent",
-     "[type void] [def foo]([type void*] [variable a], [type int] [variable b]) {",
-     "  [type int] [variable c] [operator =] [variable b] [operator +]",
+     "[variable-3 void] [def foo]([variable-3 void*] [variable a], [variable-3 int] [variable b]) {",
+     "  [variable-3 int] [variable c] [operator =] [variable b] [operator +]",
      "    [number 1];",
      "  [keyword return] [operator *][variable a];",
      "}");
@@ -21,49 +21,13 @@
      "}");
 
   MT("def",
-     "[type void] [def foo]() {}",
+     "[variable-3 void] [def foo]() {}",
      "[keyword struct] [def bar]{}",
-     "[type int] [type *][def baz]() {}");
-
-  MT("def_new_line",
-     "::[variable std]::[variable SomeTerribleType][operator <][variable T][operator >]",
-     "[def SomeLongMethodNameThatDoesntFitIntoOneLine]([keyword const] [variable MyType][operator &] [variable param]) {}")
+     "[variable-3 int] [variable-3 *][def baz]() {}");
 
   MT("double_block",
      "[keyword for] (;;)",
      "  [keyword for] (;;)",
      "    [variable x][operator ++];",
      "[keyword return];");
-
-  MT("preprocessor",
-     "[meta #define FOO 3]",
-     "[type int] [variable foo];",
-     "[meta #define BAR\\]",
-     "[meta 4]",
-     "[type unsigned] [type int] [variable bar] [operator =] [number 8];",
-     "[meta #include <baz> ][comment // comment]")
-
-
-  var mode_cpp = CodeMirror.getMode({indentUnit: 2}, "text/x-c++src");
-  function MTCPP(name) { test.mode(name, mode_cpp, Array.prototype.slice.call(arguments, 1)); }
-
-  MTCPP("cpp14_literal",
-    "[number 10'000];",
-    "[number 0b10'000];",
-    "[number 0x10'000];",
-    "[string '100000'];");
-
-  MTCPP("ctor_dtor",
-     "[def Foo::Foo]() {}",
-     "[def Foo::~Foo]() {}");
-
-  var mode_scala = CodeMirror.getMode({indentUnit: 2}, "text/x-scala");
-  function MTSCALA(name) { test.mode("scala_" + name, mode_scala, Array.prototype.slice.call(arguments, 1)); }
-  MTSCALA("nested_comments",
-     "[comment /*]",
-     "[comment But wait /* this is a nested comment */ for real]",
-     "[comment /**** let * me * show * you ****/]",
-     "[comment ///// let / me / show / you /////]",
-     "[comment */]");
-
 })();

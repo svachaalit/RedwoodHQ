@@ -54,13 +54,6 @@ CodeMirror.defineMode('mllike', function(_config, parserConfig) {
       state.tokenize = tokenString;
       return state.tokenize(stream, state);
     }
-    if (ch === '{') {
-      if (stream.eat('|')) {
-        state.longString = true;
-        state.tokenize = tokenLongString;
-        return state.tokenize(stream, state);
-      }
-    }
     if (ch === '(') {
       if (stream.eat('*')) {
         state.commentLevel++;
@@ -81,32 +74,18 @@ CodeMirror.defineMode('mllike', function(_config, parserConfig) {
       return 'comment';
     }
     if (/\d/.test(ch)) {
-      if (ch === '0' && stream.eat(/[bB]/)) {
-        stream.eatWhile(/[01]/);
-      } if (ch === '0' && stream.eat(/[xX]/)) {
-        stream.eatWhile(/[0-9a-fA-F]/)
-      } if (ch === '0' && stream.eat(/[oO]/)) {
-        stream.eatWhile(/[0-7]/);
-      } else {
-        stream.eatWhile(/[\d_]/);
-        if (stream.eat('.')) {
-          stream.eatWhile(/[\d]/);
-        }
-        if (stream.eat(/[eE]/)) {
-          stream.eatWhile(/[\d\-+]/);
-        }
+      stream.eatWhile(/[\d]/);
+      if (stream.eat('.')) {
+        stream.eatWhile(/[\d]/);
       }
       return 'number';
     }
-    if ( /[+\-*&%=<>!?|@]/.test(ch)) {
+    if ( /[+\-*&%=<>!?|]/.test(ch)) {
       return 'operator';
     }
-    if (/[\w\xa1-\uffff]/.test(ch)) {
-      stream.eatWhile(/[\w\xa1-\uffff]/);
-      var cur = stream.current();
-      return words.hasOwnProperty(cur) ? words[cur] : 'variable';
-    }
-    return null
+    stream.eatWhile(/\w/);
+    var cur = stream.current();
+    return words.hasOwnProperty(cur) ? words[cur] : 'variable';
   }
 
   function tokenString(stream, state) {
@@ -137,20 +116,8 @@ CodeMirror.defineMode('mllike', function(_config, parserConfig) {
     return 'comment';
   }
 
-  function tokenLongString(stream, state) {
-    var prev, next;
-    while (state.longString && (next = stream.next()) != null) {
-      if (prev === '|' && next === '}') state.longString = false;
-      prev = next;
-    }
-    if (!state.longString) {
-      state.tokenize = tokenBase;
-    }
-    return 'string';
-  }
-
   return {
-    startState: function() {return {tokenize: tokenBase, commentLevel: 0, longString: false};},
+    startState: function() {return {tokenize: tokenBase, commentLevel: 0};},
     token: function(stream, state) {
       if (stream.eatSpace()) return null;
       return state.tokenize(stream, state);
@@ -172,9 +139,7 @@ CodeMirror.defineMIME('text/x-ocaml', {
     'print_endline': 'builtin',
     'true': 'atom',
     'false': 'atom',
-    'raise': 'keyword',
-    'module': 'keyword',
-    'sig': 'keyword'
+    'raise': 'keyword'
   }
 });
 
